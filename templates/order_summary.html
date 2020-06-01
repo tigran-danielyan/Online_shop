@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <main>
+    <div class="container">
+        <h2> Order Summary</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Item title</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Price</th>
+                    
+                </tr>
+                </thead>
+                <tbody>
+                {% for order_item in object.items.all  %}
+                <tr>
+                    <th scope="row">{{ forloop.counter  }}</th>
+                    <td>{{ order_item.item.title }}</td>
+                    <td>{{ order_item.item.price }}</td>
+                    <td>
+                    {% if request.user.is_superuser %}
+                        <a href="{{ order_item.item.get_decrease_item_quantity_url }}{{order_item.user}}"><i class="fas fa-minus"></i></a>
+                            {{ order_item.quantity }}
+                        <a href="{{ order_item.item.get_add_to_cart_url }}{{order_item.user}}"><i class="fas fa-plus"></i></a>
+                    {% else %}
+                    
+                        <a href="{{ order_item.item.get_decrease_item_quantity_url }}"><i class="fas fa-minus"></i></a>
+                            {{ order_item.quantity }}
+                        <a href="{{ order_item.item.get_add_to_cart_url }}"><i class="fas fa-plus"></i></a>
+                    {% endif %}
+                  </td>
+                    <td>
+                    {% if order_item.item.discount_price %}
+                        ${{ order_item.get_item_total_price }}
+                        <span class="badge badge-primary" >saving ${{ order_item.get_item_saved_amount }}
+                        </span>
+                        <a href="{{ order_item.item.get_remove_from_cart_url }}">
+                        <i style = "color:red" class="far fa-trash-alt float-right"></i>
+                        </a>
+                    {% else %}
+                        ${{ order_item.get_item_total_price }}
+
+                        {% if request.user.is_superuser %}
+                            <a href="{{ order_item.item.get_remove_from_cart_url }}">
+                            <i style = "color:red" class="far fa-trash-alt float-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ order_item.item.get_remove_from_cart_url }}">
+                            <i style = "color:red" class="far fa-trash-alt float-right"></i>
+                            </a>
+                        {% endif %}
+                        
+                    {% endif %}
+                    </td>
+ 
+                </tr>
+                {% empty %}
+                <tr>
+                <td colspan="5"><b>The cart is empty
+                </td>
+                <td><a class="btn btn-primary" href="{% url 'core:home' %}"> Go to shoping
+                </a>
+                </td>
+
+                </tr>
+
+                {% endfor %}
+
+                {% if  object.get_cart_summary  %}
+                <tr>
+                <td colspan="4"><b>Order Summary
+                </td>
+                <td>${{ object.get_cart_summary }} </td>
+
+                </tr>
+                {% if not request.user.is_superuser %}
+                <td colspan="5">
+                <a class="btn btn-primary" href="{% url 'core:home' %}"> Continiue shoping
+                </a>
+                <a class="btn btn-yellow" href="{% url 'core:checkout' %}"> Next step
+                </a>
+                </td>
+                {% endif %}
+                </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+  </main>
+
+{% endblock content %}

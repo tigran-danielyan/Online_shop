@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <main>
+    <div class="container">
+        <h2> Order Summary</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">UserName</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Ordered</th>
+                    <th scope="col">Summa</th>
+                    
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in object_list %}
+                <tr>
+                   
+                    <th scope="row"><a href="{% url "core:user-order-view" order.user %}">{{ forloop.counter  }}</a></th>
+                    <td>{{ order }}</td>
+                    <td>{{ order.ordered_date }}</td>
+                    <td>{{ order.ordered }}</td>
+                    <td>{{ order.get_cart_summary }}</td>
+                    
+                    
+ 
+                </tr>
+                {% empty %}
+                <tr>
+                <td colspan="5"><b>There isn't any order yet
+                </td>
+                <td><a class="btn btn-primary" href="{% url 'core:home' %}"> Go to shoping
+                </a>
+                </td>
+
+                </tr>
+
+                {% endfor %}
+
+                {% if  object.get_cart_summary  %}
+                <tr>
+                <td colspan="4"><b>Order Summary
+                </td>
+                <td>${{ object.get_cart_summary }} </td>
+
+                </tr>
+                <td colspan="5">
+                <a class="btn btn-primary" href="{% url 'core:home' %}"> Continiue shoping
+                </a>
+                <a class="btn btn-yellow" href="{% url 'core:checkout' %}"> Next step
+                </a>
+                </td>
+                </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+  </main>
+
+{% endblock content %}
